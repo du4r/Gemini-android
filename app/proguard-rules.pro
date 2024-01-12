@@ -1,3 +1,30 @@
+
+#keep class 'MainActivity'
+-keep class
+com.amine.geminidroid.MainActivity
+
+#keep method 'onCreate()'
+-keepclassmembers class
+com.amine.geminidroid.MainActivity{
+  onCreate(android.os.Bundle);
+}
+
+-keepclassmembers class
+com.amine.geminidroid.camera.CameraViewModel
+
+
+# ADVICE: start obsfuscation with models and enums
+
+-keep class com.amine.geminidroid.ui.theme.ThemeKt
+
+-keep class com.google.ai.client.generativeai.**
+{*;}
+
+-obfuscationdictionary
+dictionary.txt
+
+-optimizations
+
 # Add project specific ProGuard rules here.
 # You can control the set of applied configuration files using the
 # proguardFiles setting in build.gradle.

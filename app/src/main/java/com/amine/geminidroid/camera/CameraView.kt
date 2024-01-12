@@ -38,15 +38,15 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 
-
 @Composable
 fun CameraView(
     outputDirectory: File,
     executor: Executor,
     onImageCaptured: (Uri) -> Unit,
-    onError: (ImageCaptureException) -> Unit
+    onError: (ImageCaptureException) -> Unit,
+    viewModel: CameraViewModel
 ) {
-    // 1
+
     val lensFacing = CameraSelector.LENS_FACING_BACK
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -58,7 +58,7 @@ fun CameraView(
         .requireLensFacing(lensFacing)
         .build()
 
-    // 2
+
     LaunchedEffect(lensFacing) {
         val cameraProvider = context.getCameraProvider()
         cameraProvider.unbindAll()
@@ -72,7 +72,7 @@ fun CameraView(
         preview.setSurfaceProvider(previewView.surfaceProvider)
     }
 
-    // 3
+
     Box(contentAlignment = Alignment.BottomCenter, modifier = Modifier.fillMaxSize()) {
         AndroidView({ previewView }, modifier = Modifier.fillMaxSize())
 
@@ -85,7 +85,8 @@ fun CameraView(
                     outputDirectory = outputDirectory,
                     executor = executor,
                     onImageCaptured = onImageCaptured,
-                    onError = onError
+                    onError = onError,
+                    viewModel = viewModel,
                 )
             },
             content = {
@@ -103,13 +104,15 @@ fun CameraView(
     }
 }
 
+
 private fun takePhoto(
     filenameFormat: String,
     imageCapture: ImageCapture,
     outputDirectory: File,
     executor: Executor,
     onImageCaptured: (Uri) -> Unit,
-    onError: (ImageCaptureException) -> Unit
+    onError: (ImageCaptureException) -> Unit,
+    viewModel: CameraViewModel
 ) {
     val photoFile = File(
         outputDirectory,
@@ -121,6 +124,10 @@ private fun takePhoto(
     imageCapture.takePicture(outputOptions, executor, object : ImageCapture.OnImageSavedCallback {
         override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
             val savedUri = Uri.fromFile(photoFile)
+
+            viewModel.photoUri.value = savedUri
+
+            //apagar??
             onImageCaptured(savedUri)
         }
 
@@ -131,7 +138,6 @@ private fun takePhoto(
     })
 }
 
-
 private suspend fun Context.getCameraProvider(): ProcessCameraProvider =
     suspendCoroutine { continuation ->
         ProcessCameraProvider.getInstance(this).also { cameraProvider ->
@@ -140,3 +146,4 @@ private suspend fun Context.getCameraProvider(): ProcessCameraProvider =
             }, ContextCompat.getMainExecutor(this))
         }
     }
+
