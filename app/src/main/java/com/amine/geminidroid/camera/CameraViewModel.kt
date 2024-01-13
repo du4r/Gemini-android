@@ -40,9 +40,9 @@ class CameraViewModel(activity: Activity) : ViewModel() {
 
             val inputContent = content {
                 image(resizedBitmap)
-                text("descreva a imagem")
+                text("descreva isso em baianês, usando girias baianas")
             }
-            Log.d("braum", "teste")
+
             try {
                 val response = generativeModel.generateContent(inputContent)
                 responseText.value = response.text.toString()
