@@ -18,7 +18,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.amine.geminidroid.camera.CameraView
 import com.amine.geminidroid.camera.CameraViewModel
 import com.amine.geminidroid.camera.ResultScreen
-import com.amine.geminidroid.text.AskViewmodel
+import com.amine.geminidroid.chat.ChatViewmodel
 import com.amine.geminidroid.ui.theme.GeminiDroidTheme
 import java.io.File
 import java.util.concurrent.Executors
@@ -31,7 +31,7 @@ class MainActivity : ComponentActivity() {
 
     private lateinit var photoUri: Uri
     lateinit var cameraViewModel: CameraViewModel
-    lateinit var askMeViewmodel: AskViewmodel
+    lateinit var askMeViewmodel: ChatViewmodel
 
     @RequiresApi(Build.VERSION_CODES.P)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,14 +45,14 @@ class MainActivity : ComponentActivity() {
 
         val askMeViewModelFactory = object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return AskViewmodel() as T
+                return ChatViewmodel() as T
             }
         }
 
         cameraViewModel =
-            ViewModelProvider(this, cameraViewmodelFactory).get(cameraViewModel::class.java)
+            ViewModelProvider(this, cameraViewmodelFactory).get(CameraViewModel::class.java)
         askMeViewmodel =
-            ViewModelProvider(this, askMeViewModelFactory).get(askMeViewmodel::class.java)
+            ViewModelProvider(this, askMeViewModelFactory).get(ChatViewmodel::class.java)
 
         setContent {
             GeminiDroidTheme {
